@@ -76,7 +76,10 @@ class YoutubeMusic:
             print("No playlists to import.")
             return
         if playlist_name:
-            if playlist_name not in self.spotify_data.playlists:
+            if not any(
+                playlist["name"] == playlist_name
+                for playlist in self.spotify_data.playlists
+            ):
                 print(
                     f"🚨 Playlist '{playlist_name}' not found in spotify_library.json file."
                 )
@@ -119,9 +122,8 @@ class YoutubeMusic:
                 counter += 1
             if video_ids:
                 self.ytmusicapi.add_playlist_items(playlist_id, video_ids)
-            print(
-                f"Added {len(video_ids)} songs to {playlist['name']}."
-            )  # todo: bug here?
+                counter -= 1
+            print(f"Added {counter} songs to {playlist['name']}.")
 
     def import_saved_albums(self):
         print("Importing saved albums...")
