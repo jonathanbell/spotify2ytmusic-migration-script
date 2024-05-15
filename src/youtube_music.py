@@ -70,25 +70,24 @@ class YoutubeMusic:
             counter += 1
         print(f"Added {counter} songs to Liked Music.")
 
-    def import_playlists(self, playlist_name=None):
+    def import_playlists(self, playlist_names=None):
+        max_batch_size = 50
         print("Importing playlists...")
         if len(self.spotify_data.playlists) == 0:
             print("No playlists to import.")
             return
-        if playlist_name:
-            if not any(
-                playlist["name"] == playlist_name
-                for playlist in self.spotify_data.playlists
-            ):
-                print(
-                    f"🚨 Playlist '{playlist_name}' not found in spotify_library.json file."
-                )
-                return
-            playlists = [
-                playlist
-                for playlist in self.spotify_data.playlists
-                if playlist["name"] == playlist_name
-            ]
+        if playlist_names:
+            playlists = []
+            for name in playlist_names:
+                matched_playlists = [
+                    playlist
+                    for playlist in self.spotify_data.playlists
+                    if playlist["name"] == name
+                ]
+                if not matched_playlists:
+                    print(f"🚨 '{name}' was not found in spotify_library.json file.")
+                    sys.exit(1)
+                playlists.extend(matched_playlists)
         else:
             playlists = self.spotify_data.playlists
         for playlist in playlists:
@@ -97,8 +96,8 @@ class YoutubeMusic:
             )
             print(f"📝 Created playlist: {playlist_id} - {playlist['name']}")
             video_ids = []
+            added_songs_counter = 0
             print("Searching for playlist songs...")
-            counter = 1
             for song in playlist["tracks"]:
                 matched_yt_song = self._search_for_song(
                     song["name"], song["artists"][0]["name"], song["album"]["name"]
@@ -108,22 +107,53 @@ class YoutubeMusic:
                         f"Found on YT Music: {matched_yt_song['title']} - {matched_yt_song['artists'][0]['name']}"
                     )
                     video_ids.append(matched_yt_song["videoId"])
-                    if len(video_ids) >= 50:
+                    added_songs_counter += 1
+                    if len(video_ids) >= max_batch_size:
                         print(
                             f"Adding the above {len(video_ids)} songs to {playlist['name']} playlist... 👆"
                         )
-                        self.ytmusicapi.add_playlist_items(playlist_id, video_ids)
-                        print("...✅")
+                        result = self.ytmusicapi.add_playlist_items(
+                            playlist_id, video_ids, None, True
+                        )
+                        if result["status"] == "STATUS_SUCCEEDED":
+                            print("...✅")
+                        else:
+                            print(
+                                "❌ Error while adding songs to playlist("
+                                + playlist["name"]
+                                + "): "
+                                + result["status"]
+                            )
+                            sys.exit(1)
                         video_ids = []
                 else:
                     self._add_to_lost_and_found(
                         "song", f"{song['name']} by {song['artists'][0]['name']}"
                     )
-                counter += 1
-            if video_ids:
-                self.ytmusicapi.add_playlist_items(playlist_id, video_ids)
-                counter -= 1
-            print(f"Added {counter} songs to {playlist['name']}.")
+            if len(video_ids) > 0:
+                print(
+                    f"Adding the above {len(video_ids)} songs to {playlist['name']} playlist... 👆"
+                )
+                result = self.ytmusicapi.add_playlist_items(
+                    playlist_id, video_ids, None, True
+                )
+                print(result["status"])
+                if result["status"] == "STATUS_SUCCEEDED":
+                    print("...✅")
+                else:
+                    print(
+                        "❌ Error while adding songs to playlist ("
+                        + playlist["name"]
+                        + "): "
+                        + result["status"]
+                    )
+                    print(
+                        result["actions"][0]["confirmDialogEndpoint"]["content"][
+                            "confirmDialogRenderer"
+                        ]["dialogMessages"][0]["runs"][0]["text"]
+                    )
+                    sys.exit(1)
+            print(f"Added {added_songs_counter} songs to {playlist['name']}.")
 
     def import_saved_albums(self):
         print("Importing saved albums...")

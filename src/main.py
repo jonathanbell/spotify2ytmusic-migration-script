@@ -11,27 +11,27 @@ def main():
     parser.add_argument(
         "--playlists",
         action="store_true",
-        help="Import playlists from Spotify to YouTube Music. Requires a spotify_library.json file.",
+        help="Import playlists from Spotify to YouTube Music. Requires the data/spotify_library.json file.",
     )
     parser.add_argument(
-        "--playlist",
+        "--lists",
         type=str,
-        help="Specify a single playlist to import. Must be used with --playlists.",
+        help="Specify a comma separated list of playlists to import. Must be used with --playlists.",
     )
     parser.add_argument(
         "--followed-artists",
         action="store_true",
-        help="Import followed artists from Spotify to YouTube Music. Requires a spotify_library.json file.",
+        help="Import followed artists from Spotify to YouTube Music. Requires the data/spotify_library.json file.",
     )
     parser.add_argument(
         "--liked-songs",
         action="store_true",
-        help="Import liked songs from Spotify to YouTube Music Liked Music. Requires a spotify_library.json file.",
+        help="Import liked songs from Spotify to YouTube Music Liked Music. Requires the data/spotify_library.json file.",
     )
     parser.add_argument(
         "--saved-albums",
         action="store_true",
-        help="Import saved albums from Spotify to YouTube Music. Requires a spotify_library.json file.",
+        help="Import saved albums from Spotify to YouTube Music. Requires the data/spotify_library.json file.",
     )
     parser.add_argument(
         "--spotify-playlists",
@@ -44,8 +44,10 @@ def main():
     if args.spotify_playlists:
         ytmusic.list_importable_playlists()
     elif args.playlists:
-        if args.playlist:
-            ytmusic.import_playlists(args.playlist)
+        if args.lists:
+            ytmusic.import_playlists(
+                [playlist.strip() for playlist in args.lists.split(",")]
+            )
         else:
             ytmusic.import_playlists()
     elif args.followed_artists:
