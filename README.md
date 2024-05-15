@@ -1,6 +1,10 @@
 # Spotify to YouTube Music Migration Script
 
-A script to migrate library and playlists from Spotify to YouTube Music.
+A script to migrate library and playlists from Spotify to YouTube Music. This is meant to be paired with [jonathanbell/spotify_export](https://github.com/jonathanbell/spotify_export)
+
+⚠️ This is a work in progress but feel free to use it if you want 🤙
+
+![](https://miro.medium.com/v2/resize:fit:751/1*0zSv0aE2Whxf0ecf1PGRuw.jpeg)
 
 ## Prerequisites
 
