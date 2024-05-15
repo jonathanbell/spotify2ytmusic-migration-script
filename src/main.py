@@ -26,7 +26,7 @@ def main():
     parser.add_argument(
         "--liked-songs",
         action="store_true",
-        help="Import liked songs from Spotify to YouTube Music. Requires a spotify_library.json file.",
+        help="Import liked songs from Spotify to YouTube Music Liked Music. Requires a spotify_library.json file.",
     )
     parser.add_argument(
         "--saved-albums",
@@ -34,14 +34,14 @@ def main():
         help="Import saved albums from Spotify to YouTube Music. Requires a spotify_library.json file.",
     )
     parser.add_argument(
-        "--list-importable-playlists",
+        "--spotify-playlists",
         action="store_true",
-        help="List all importable playlists from the spotify_library.json file.",
+        help="List all importable Spotify playlists from the spotify_library.json file.",
     )
 
     args = parser.parse_args()
 
-    if args.list_importable_playlists:
+    if args.spotify_playlists:
         ytmusic.list_importable_playlists()
     elif args.playlists:
         if args.playlist:

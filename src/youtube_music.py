@@ -47,21 +47,13 @@ class YoutubeMusic:
             print(f"Subscribed to: {yt_candiates[0]['artist']}")
 
     def import_liked_songs(self):
-        print("Importing liked songs...")
+        print("Importing liked songs to Liked Music...")
         if self.spotify_data.liked_songs[0]["track_count"] == 0:
             print("No liked songs to import.")
             return
-        try:
-            liked_songs_playlist_id = self.ytmusicapi.create_playlist(
-                "Liked Songs", "Created by the Spotify to YTMusic Migration Script"
-            )
-        except Exception as e:
-            print(f"Failed to create playlist: {e}")
-            return
-        video_ids = []
         print("Searching for liked songs...")
         counter = 1
-        for song in self.spotify_data.liked_songs[0]["tracks"]:
+        for song in reversed(self.spotify_data.liked_songs[0]["tracks"]):
             matched_yt_song = self._search_for_song(
                 song["name"], song["artists"][0]["name"], song["album"]["name"]
             )
@@ -69,24 +61,14 @@ class YoutubeMusic:
                 print(
                     f"Found on YT Music ({counter}/{len(self.spotify_data.liked_songs[0]['tracks'])}): {matched_yt_song['title']} - {matched_yt_song['artists'][0]['name']}"
                 )
-                video_ids.append(matched_yt_song["videoId"])
-                if len(video_ids) >= 50:
-                    print(
-                        f"Adding the above {len(video_ids)} songs to Liked Songs playlist... 👆"
-                    )
-                    self.ytmusicapi.add_playlist_items(
-                        liked_songs_playlist_id, video_ids
-                    )
-                    print("...✅")
-                    video_ids = []
+                self.ytmusicapi.rate_song(matched_yt_song["videoId"], "LIKE")
+                print("...Liked 👍")
             else:
                 self._add_to_lost_and_found(
                     "song", f"{song['name']} by {song['artists'][0]['name']}"
                 )
             counter += 1
-        if video_ids:
-            self.ytmusicapi.add_playlist_items(liked_songs_playlist_id, video_ids)
-        print(f"Added {len(video_ids)} songs to Liked Songs.")
+        print(f"Added {counter} songs to Liked Music.")
 
     def import_playlists(self, playlist_name=None):
         print("Importing playlists...")
