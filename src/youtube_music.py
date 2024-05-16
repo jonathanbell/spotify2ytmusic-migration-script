@@ -169,30 +169,19 @@ class YoutubeMusic:
                 query=f'{album["name"]} by {album["artists"][0]["name"]}',
                 filter="albums",
             )
+            found = False
             for yt_album_candidate in yt_album_candidates:
-                new_playlist_id = None
                 if yt_album_candidate["title"] == album["name"]:
-                    new_playlist_id = self.ytmusicapi.create_playlist(
-                        f'{yt_album_candidate["title"]} - {album["artists"][0]["name"]}',
-                        "Created by the Spotify to YTMusic Migration Script",
+                    print(yt_album_candidate)
+                    self.ytmusicapi.rate_playlist(
+                        yt_album_candidate["browseId"], "LIKE"
                     )
                     print(
-                        f'📝 Created playlist: {yt_album_candidate["title"]} - {album["artists"][0]["name"]}'
+                        f'💿 Added album: {yt_album_candidate["title"]} - {album["artists"][0]["name"]}'
                     )
-                    print("Searching for album songs...")
-                    yt_album_details = self.ytmusicapi.get_album(
-                        yt_album_candidate["browseId"]
-                    )
-                    for song in yt_album_details["tracks"]:
-                        self.ytmusicapi.add_playlist_items(
-                            new_playlist_id, [song["videoId"]]
-                        )
-                break
-            if new_playlist_id:
-                print(
-                    f"Added {len(yt_album_details['tracks'])} songs to {yt_album_candidate['title']}."
-                )
-            else:
+                    found = True
+                    break
+            if not found:
                 self._add_to_lost_and_found(
                     "album", f"{album['name']} by {album['artists'][0]['name']}"
                 )
