@@ -99,6 +99,8 @@ class YoutubeMusic:
             added_songs_counter = 0
             print("Searching for playlist songs...")
             for song in playlist["tracks"]:
+                if song["artists"] is None:
+                    continue
                 matched_yt_song = self._search_for_song(
                     song["name"], song["artists"][0]["name"], song["album"]["name"]
                 )
@@ -137,7 +139,6 @@ class YoutubeMusic:
                 result = self.ytmusicapi.add_playlist_items(
                     playlist_id, video_ids, None, True
                 )
-                print(result["status"])
                 if result["status"] == "STATUS_SUCCEEDED":
                     print("...✅")
                 else:
@@ -216,7 +217,7 @@ class YoutubeMusic:
                 limit=1,
             )
             if song and len(song) > 0:
-                print("Found song! 🙂")
+                print("Found song! 🙂 (" + song[0]["title"] + ")")
                 return song[0]
         self._add_to_lost_and_found("song", f"{track_name} by {artist_name}")
         return None
