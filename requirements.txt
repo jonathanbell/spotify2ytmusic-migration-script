@@ -1,1 +1,1 @@
-ytmusicapi==1.7.0
+git+https://github.com/jonathanbell/ytmusicapi.git@add-playlistid-to-album-search-results#egg=ytmusicapi

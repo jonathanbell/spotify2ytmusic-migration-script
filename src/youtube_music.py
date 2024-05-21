@@ -171,10 +171,15 @@ class YoutubeMusic:
             )
             found = False
             for yt_album_candidate in yt_album_candidates:
+                if not yt_album_candidate["playlistId"]:
+                    print(
+                        "🚨 No playlist ID found in data returned from search! Cannot add and album to library without a valid playlist ID for a given album."
+                    )
+                    sys.exit(1)
                 if yt_album_candidate["title"] == album["name"]:
                     print(yt_album_candidate)
                     self.ytmusicapi.rate_playlist(
-                        yt_album_candidate["browseId"], "LIKE"
+                        yt_album_candidate["playlistId"], "LIKE"
                     )
                     print(
                         f'💿 Added album: {yt_album_candidate["title"]} - {album["artists"][0]["name"]}'
