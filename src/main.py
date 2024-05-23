@@ -6,7 +6,7 @@ ytmusic = YoutubeMusic()
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Migrate your Spotify data to YouTube Music. Use https://github.com/jonathanbell/spotify_export to export your Spotify data and create your spotify_library.json file first."
+        description="Migrate your Spotify data to YouTube Music. Use https://github.com/jonathanbell/spotify_export to export your Spotify data and create your spotify_library.json file before using this script."
     )
     parser.add_argument(
         "--playlists",
