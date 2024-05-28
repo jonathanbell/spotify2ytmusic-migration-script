@@ -72,3 +72,9 @@ It would seem that unofficial, designed-for-browser YT Music API doesn't take ki
 Exception: Server returned HTTP 400: Bad Request.
 You are creating too many playlists. Please wait a while before creating further playlists.
 ```
+
+### YouTube (might) get mad
+
+🚨 If you are worried about your YT account getting banned or flagged for scripting, using the `--slow-motion` flag might be helpful. Basically, the script will operate in a much slower manner when slow motion is enabled in an attempt to not be flagged as "non-human activity" by YT Music.
+
+This script/open source repository offers _no warranty_ and will not be help liable for anything your stupid ass does. The code and functionality is offered as is. See the included LICENSE file.

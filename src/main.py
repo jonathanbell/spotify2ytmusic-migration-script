@@ -38,6 +38,11 @@ def main():
         action="store_true",
         help="List all importable Spotify playlists from the spotify_library.json file.",
     )
+    parser.add_argument(
+        "--slow-motion",
+        action="store_true",
+        help="Call the unofficial YouTube Music API in slow motion. Will likely help prevent your account from being banned.",
+    )
 
     args = parser.parse_args()
 
@@ -46,16 +51,17 @@ def main():
     elif args.playlists:
         if args.lists:
             ytmusic.import_playlists(
-                [playlist.strip() for playlist in args.lists.split(",")]
+                playlist_names=[playlist.strip() for playlist in args.lists.split(",")],
+                slow=args.slow_motion,
             )
         else:
-            ytmusic.import_playlists()
+            ytmusic.import_playlists(playlist_names=None, slow=args.slow_motion)
     elif args.followed_artists:
-        ytmusic.import_followed_artists()
+        ytmusic.import_followed_artists(slow=args.slow_motion)
     elif args.liked_songs:
-        ytmusic.import_liked_songs()
+        ytmusic.import_liked_songs(slow=args.slow_motion)
     elif args.saved_albums:
-        ytmusic.import_saved_albums()
+        ytmusic.import_saved_albums(slow=args.slow_motion)
     else:
         print("No valid arguments provided. Use --help for more information.")
 

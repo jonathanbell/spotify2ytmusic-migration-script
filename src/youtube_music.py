@@ -1,6 +1,8 @@
 import json
 import os
+import random
 import sys
+import time
 from ytmusicapi import YTMusic
 
 
@@ -31,7 +33,7 @@ class YoutubeMusic:
         self.spotify_data = type("SpotifyData", (object,), spotify_library)
         self.ytmusicapi = YTMusic(oauth_file_path)
 
-    def import_followed_artists(self):
+    def import_followed_artists(self, slow=False):
         print("Importing followed artists...")
         if len(self.spotify_data.followed_artists) == 0:
             print("No followed artists to import.")
@@ -45,8 +47,11 @@ class YoutubeMusic:
                 continue
             self.ytmusicapi.subscribe_artists([yt_candiates[0]["browseId"]])
             print(f"Subscribed to: {yt_candiates[0]['artist']}")
+            if slow:
+                print("🐢 Slow motion enabled. Sleeping for 1-3 seconds.")
+                time.sleep(random.uniform(1, 3))
 
-    def import_liked_songs(self):
+    def import_liked_songs(self, slow=False):
         print("Importing liked songs to Liked Music...")
         if self.spotify_data.liked_songs[0]["track_count"] == 0:
             print("No liked songs to import.")
@@ -57,12 +62,18 @@ class YoutubeMusic:
             matched_yt_song = self._search_for_song(
                 song["name"], song["artists"][0]["name"], song["album"]["name"]
             )
+            if slow:
+                print("🐢 Slow motion enabled. Sleeping for 1 second.")
+                time.sleep(1)
             if matched_yt_song:
                 print(
                     f"Found on YT Music ({counter}/{len(self.spotify_data.liked_songs[0]['tracks'])}): {matched_yt_song['title']} - {matched_yt_song['artists'][0]['name']}"
                 )
                 self.ytmusicapi.rate_song(matched_yt_song["videoId"], "LIKE")
                 print("...Liked 👍")
+                if slow:
+                    print("🐢 Slow motion enabled. Sleeping for 1-3 seconds.")
+                    time.sleep(random.uniform(1, 3))
             else:
                 self._add_to_lost_and_found(
                     "song", f"{song['name']} by {song['artists'][0]['name']}"
@@ -70,7 +81,7 @@ class YoutubeMusic:
             counter += 1
         print(f"Added {counter} songs to Liked Music.")
 
-    def import_playlists(self, playlist_names=None):
+    def import_playlists(self, playlist_names=None, slow=False):
         max_batch_size = 50
         print("Importing playlists...")
         if len(self.spotify_data.playlists) == 0:
@@ -95,6 +106,9 @@ class YoutubeMusic:
                 playlist["name"], "Created by the Spotify to YTMusic Migration Script"
             )
             print(f"📝 Created playlist: {playlist_id} - {playlist['name']}")
+            if slow:
+                print("🐢 Slow motion enabled. Sleeping for 1-3 seconds.")
+                time.sleep(random.uniform(1, 3))
             video_ids = []
             added_songs_counter = 0
             print("Searching for playlist songs...")
@@ -104,6 +118,9 @@ class YoutubeMusic:
                 matched_yt_song = self._search_for_song(
                     song["name"], song["artists"][0]["name"], song["album"]["name"]
                 )
+                if slow:
+                    print("🐢 Slow motion enabled. Sleeping for 1 second.")
+                    time.sleep(1)
                 if matched_yt_song:
                     print(
                         f"Found on YT Music: {matched_yt_song['title']} - {matched_yt_song['artists'][0]['name']}"
@@ -119,6 +136,11 @@ class YoutubeMusic:
                         )
                         if result["status"] == "STATUS_SUCCEEDED":
                             print("...✅")
+                            if slow:
+                                print(
+                                    "🐢 Slow motion enabled. Sleeping for 1-3 seconds."
+                                )
+                                time.sleep(random.uniform(1, 3))
                         else:
                             print(
                                 "❌ Error while adding songs to playlist("
@@ -156,7 +178,7 @@ class YoutubeMusic:
                     sys.exit(1)
             print(f"Added {added_songs_counter} songs to {playlist['name']}.")
 
-    def import_saved_albums(self):
+    def import_saved_albums(self, slow=False):
         print("Importing saved albums...")
         if len(self.spotify_data.saved_albums) == 0:
             print("No saved albums to import.")
@@ -169,6 +191,9 @@ class YoutubeMusic:
                 query=f'{album["name"]} by {album["artists"][0]["name"]}',
                 filter="albums",
             )
+            if slow:
+                print("🐢 Slow motion enabled. Sleeping for 1 second.")
+                time.sleep(1)
             found = False
             for yt_album_candidate in yt_album_candidates:
                 if not yt_album_candidate["playlistId"]:
@@ -185,6 +210,9 @@ class YoutubeMusic:
                         f'💿 Added album: {yt_album_candidate["title"]} - {album["artists"][0]["name"]}'
                     )
                     found = True
+                    if slow:
+                        print("🐢 Slow motion enabled. Sleeping for 1-3 seconds.")
+                        time.sleep(random.uniform(1, 3))
                     break
             if not found:
                 self._add_to_lost_and_found(
