@@ -18,6 +18,7 @@ This script depends _heavily_ on [the `ytmusicapi` package](https://github.com/s
 
 - Python version 3.12.x (it's probably easiest to use a Python virtual environment - see below)
 - `pip`
+- `git` (you probably already have this installed on Mac or Linux)
 
 ## Installation
 
