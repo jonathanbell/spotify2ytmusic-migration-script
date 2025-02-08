@@ -67,7 +67,7 @@ Example: `python3.11 ./src/main.py --saved-albums`
 
 ## Errors do be like that
 
-It would seem that unofficial, designed-for-browser YT Music API doesn't take kindly to overuse. I've encountered the error below more than once. Basically, just do what it says; _wait a little while and try again_.
+It would seem that the unofficial, designed-for-browser YT Music API doesn't take kindly to overuse. I've encountered the error below more than once. Basically, just do what it says; _wait a little while and try again_.
 
 ```plaintext
 Exception: Server returned HTTP 400: Bad Request.
