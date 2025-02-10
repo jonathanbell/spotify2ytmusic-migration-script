@@ -17,7 +17,7 @@ class YoutubeMusic:
         spotify_library_path = "data/spotify_library.json"
         if not os.path.exists(spotify_library_path):
             print(
-                "Error: 'spotify_library.json' file is missing in the data directory."
+                "Error: 'spotify_library.json' file is missing in the data directory. Migrate your Spotify data to YouTube Music. Use https://github.com/jonathanbell/spotify_export to export your Spotify data and create your spotify_library.json file and place that file inside the data directory before using this script."
             )
             sys.exit(1)
         try:
